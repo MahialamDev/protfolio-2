@@ -1,7 +1,6 @@
 import { Button } from '@/components/ui/button'
 import { motion, useInView } from 'framer-motion'
 import { useRef } from 'react'
-import BubbleContainer from '../BubbleContainer'
 
 
 const statsData = [
@@ -50,17 +49,7 @@ export default function About() {
   const isInView = useInView(ref, { once: true, margin: "-100px" })
 
   return (
-    <BubbleContainer 
-      className="w-full bg-white dark:bg-gray-800 py-20 px-6 transition-colors duration-300" 
-      id="about"
-      bubbleCount={6}
-      bubbleColors={[
-        'rgba(59, 130, 246, 0.08)',
-        'rgba(139, 92, 246, 0.08)',
-        'rgba(236, 72, 153, 0.08)',
-        'rgba(16, 185, 129, 0.08)',
-      ]}
-    >
+    <div className="w-full bg-white dark:bg-gray-800 py-20 px-6 transition-colors duration-300 relative" id="about">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <motion.div 
@@ -200,51 +189,117 @@ export default function About() {
             ))}
           </motion.div>
           
-          {/* CTA Button */}
+          {/* Modern Standard CTA Button */}
           <motion.div 
-            className="pt-4 w-full flex justify-center md:justify-start"
+            className="pt-8 w-full flex justify-center md:justify-start"
             variants={itemVariants}
           >
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+            <motion.button
+              className="group relative bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-6 py-3.5 rounded-xl flex items-center gap-3 font-medium text-sm shadow-lg hover:shadow-xl transition-all duration-300 border border-blue-500/20 backdrop-blur-sm overflow-hidden"
+              onClick={() => {
+                // Create a temporary link element for download
+                const link = document.createElement('a')
+                link.href = '/MahialamCv.pdf'
+                link.download = 'Mahi_Alam_CV.pdf'
+                link.target = '_blank'
+                document.body.appendChild(link)
+                link.click()
+                document.body.removeChild(link)
+                
+                // Optional: Show a brief success message
+                console.log('CV download initiated')
+              }}
+              title="Download Mahi Alam's CV"
+              whileHover={{ scale: 1.02, y: -1 }}
+              whileTap={{ scale: 0.98 }}
             >
-              <Button 
-                className="group bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white px-8 py-4 rounded-2xl flex items-center gap-3 font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
-                onClick={() => {
-                  // Create a temporary link element for download
-                  const link = document.createElement('a')
-                  link.href = '/MahialamCv.pdf'
-                  link.download = 'Mahi_Alam_CV.pdf'
-                  link.target = '_blank'
-                  document.body.appendChild(link)
-                  link.click()
-                  document.body.removeChild(link)
-                  
-                  // Optional: Show a brief success message
-                  console.log('CV download initiated')
+              {/* Subtle background shine effect */}
+              <motion.div
+                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-x-12 w-full"
+                initial={{ x: "-100%" }}
+                animate={{ x: "200%" }}
+                transition={{
+                  duration: 3,
+                  repeat: Infinity,
+                  repeatDelay: 4,
+                  ease: "easeInOut"
                 }}
-                title="Download Mahi Alam's CV"
-              >
-                <span>Download CV</span>
+              />
+              
+              {/* Download icon */}
+              <motion.div className="relative z-10 flex items-center justify-center">
                 <motion.span 
-                  className="material-icons text-xl"
+                  className="material-icons text-lg"
                   animate={{ 
-                    y: [0, -3, 0]
+                    y: [0, -1, 0]
                   }}
                   transition={{ 
-                    duration: 1.5,
+                    duration: 2.5,
                     repeat: Infinity,
                     ease: "easeInOut"
                   }}
                 >
                   download
                 </motion.span>
-              </Button>
+              </motion.div>
+              
+              {/* Button text */}
+              <span className="relative z-10 font-semibold tracking-wide">
+                Download CV
+              </span>
+              
+              {/* Modern arrow icon */}
+              <motion.div 
+                className="relative z-10 flex items-center justify-center"
+                animate={{ 
+                  x: [0, 2, 0]
+                }}
+                transition={{ 
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                  delay: 0.5
+                }}
+              >
+                <motion.span 
+                  className="material-icons text-lg group-hover:translate-x-0.5 transition-transform duration-300"
+                >
+                  arrow_forward
+                </motion.span>
+              </motion.div>
+              
+              {/* Hover glow effect */}
+              <motion.div
+                className="absolute inset-0 bg-blue-400/20 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                initial={{ scale: 0.8 }}
+                whileHover={{ scale: 1 }}
+              />
+              
+              {/* Click ripple effect */}
+              <motion.div
+                className="absolute inset-0 bg-white/20 rounded-xl"
+                initial={{ scale: 0, opacity: 0 }}
+                whileTap={{ 
+                  scale: [0, 1.1, 0],
+                  opacity: [0, 0.3, 0]
+                }}
+                transition={{ duration: 0.4 }}
+              />
+            </motion.button>
+            
+            {/* Optional: File info tooltip */}
+            <motion.div
+              className="absolute mt-16 left-1/2 md:left-0 transform -translate-x-1/2 md:translate-x-0 bg-gray-900 dark:bg-gray-700 text-white text-xs px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none whitespace-nowrap"
+              initial={{ y: 10, opacity: 0 }}
+              animate={{ y: 0, opacity: 0 }}
+              whileHover={{ opacity: 1 }}
+            >
+              PDF • 2.1 MB
+              <div className="absolute -top-1 left-1/2 md:left-4 transform -translate-x-1/2 w-2 h-2 bg-gray-900 dark:bg-gray-700 rotate-45"></div>
             </motion.div>
           </motion.div>
         </motion.div>
       </div>
-    </BubbleContainer>
+    </div>
   )
 }

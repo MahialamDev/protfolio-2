@@ -1,9 +1,8 @@
 import Image from 'next/image'
 import { motion } from 'framer-motion'
-import { useState, useEffect, useMemo } from 'react'
-import BubbleContainer from '../BubbleContainer'
+import { useState, useEffect, useMemo, useCallback, memo } from 'react'
 
-const AnimatedRoleText = ({ delay = 0 }: { delay?: number }) => {
+const AnimatedRoleText = memo(({ delay = 0 }: { delay?: number }) => {
   const [displayText, setDisplayText] = useState('')
   const [currentRoleIndex, setCurrentRoleIndex] = useState(0)
   const [charIndex, setCharIndex] = useState(0)
@@ -15,34 +14,35 @@ const AnimatedRoleText = ({ delay = 0 }: { delay?: number }) => {
     "Digital Marketer"
   ], [])
 
-  useEffect(() => {
+  const updateText = useCallback(() => {
     const currentRole = roles[currentRoleIndex]
     
-    const timer = setTimeout(() => {
-      if (!isDeleting) {
-        // Typing
-        if (charIndex < currentRole.length) {
-          setDisplayText(currentRole.substring(0, charIndex + 1))
-          setCharIndex(charIndex + 1)
-        } else {
-          // Finished typing, wait then start deleting
-          setTimeout(() => setIsDeleting(true), 2000)
-        }
+    if (!isDeleting) {
+      // Typing - much faster
+      if (charIndex < currentRole.length) {
+        setDisplayText(currentRole.substring(0, charIndex + 1))
+        setCharIndex(prev => prev + 1)
       } else {
-        // Deleting
-        if (charIndex > 0) {
-          setDisplayText(currentRole.substring(0, charIndex - 1))
-          setCharIndex(charIndex - 1)
-        } else {
-          // Finished deleting, move to next role
-          setIsDeleting(false)
-          setCurrentRoleIndex((prev) => (prev + 1) % roles.length)
-        }
+        // Finished typing, shorter wait then start deleting
+        setTimeout(() => setIsDeleting(true), 800)
       }
-    }, delay + (isDeleting ? 50 : 100))
+    } else {
+      // Deleting - faster
+      if (charIndex > 0) {
+        setDisplayText(currentRole.substring(0, charIndex - 1))
+        setCharIndex(prev => prev - 1)
+      } else {
+        // Finished deleting, move to next role
+        setIsDeleting(false)
+        setCurrentRoleIndex((prev) => (prev + 1) % roles.length)
+      }
+    }
+  }, [charIndex, currentRoleIndex, isDeleting, roles])
 
+  useEffect(() => {
+    const timer = setTimeout(updateText, delay + (isDeleting ? 25 : 60))
     return () => clearTimeout(timer)
-  }, [charIndex, currentRoleIndex, isDeleting, delay, roles])
+  }, [updateText, delay, isDeleting])
 
   return (
     <span className="relative">
@@ -54,7 +54,9 @@ const AnimatedRoleText = ({ delay = 0 }: { delay?: number }) => {
       />
     </span>
   )
-}
+})
+
+AnimatedRoleText.displayName = 'AnimatedRoleText'
 
 export default function Hero() {
   return (
@@ -63,17 +65,7 @@ export default function Hero() {
       animate={{ opacity: 1 }}
       transition={{ duration: 1.2 }}
     >
-      <BubbleContainer 
-        className="grow flex flex-col items-center justify-center px-6 pt-24 md:pt-35 pb-12 w-full max-w-7xl mx-auto"
-        bubbleCount={8}
-        bubbleColors={[
-          'rgba(59, 130, 246, 0.1)',
-          'rgba(139, 92, 246, 0.1)',
-          'rgba(236, 72, 153, 0.1)',
-          'rgba(16, 185, 129, 0.1)',
-          'rgba(245, 158, 11, 0.1)',
-        ]}
-      >
+      <div className="grow flex flex-col items-center justify-center px-6 pt-24 md:pt-35 pb-12 w-full max-w-7xl mx-auto relative">
         {/* Animated Background Elements */}
         <motion.div
           className="absolute inset-0 overflow-hidden pointer-events-none"
@@ -81,9 +73,9 @@ export default function Hero() {
           animate={{ opacity: 1 }}
           transition={{ duration: 2, delay: 0.5 }}
         >
-          {/* Floating Geometric Shapes */}
+          {/* Reduced floating elements for better performance */}
           <motion.div
-            className="absolute top-20 left-10 w-4 h-4 bg-blue-400/20 rounded-full"
+            className="absolute top-20 left-10 w-4 h-4 bg-blue-400/20 rounded-full will-change-transform"
             animate={{
               y: [0, -20, 0],
               x: [0, 10, 0],
@@ -97,7 +89,7 @@ export default function Hero() {
             }}
           />
           <motion.div
-            className="absolute top-40 right-20 w-6 h-6 bg-purple-400/20 rotate-45"
+            className="absolute top-40 right-20 w-6 h-6 bg-purple-400/20 rotate-45 will-change-transform"
             animate={{
               y: [0, -30, 0],
               x: [0, -15, 0],
@@ -108,21 +100,6 @@ export default function Hero() {
               repeat: Infinity,
               ease: "easeInOut",
               delay: 1,
-            }}
-          />
-          <motion.div
-            className="absolute bottom-32 left-20 w-3 h-3 bg-green-400/20 rounded-full"
-            animate={{
-              y: [0, -25, 0],
-              x: [0, 20, 0],
-              scale: [1, 1.5, 1],
-            }}
-            transition={{
-              duration: 7,
-              repeat: Infinity,
-              ease: "easeInOut",
-              delay: 2,
-              type: "tween"
             }}
           />
         </motion.div>
@@ -767,7 +744,7 @@ export default function Hero() {
             keyboard_arrow_down
           </motion.span>
         </motion.div>
-      </BubbleContainer>
+      </div>
     </motion.div>
   )
 }

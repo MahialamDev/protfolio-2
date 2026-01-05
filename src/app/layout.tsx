@@ -12,6 +12,20 @@ const poppins = Poppins({
 export const metadata: Metadata = {
   title: "Md Mahi Alam - Full Stack Developer",
   description: "Portfolio of Md Mahi Alam, a passionate Full Stack Web Developer specializing in React, Next.js, Node.js, and modern web technologies.",
+  keywords: "Full Stack Developer, React, Next.js, Node.js, Web Developer, Portfolio, JavaScript, TypeScript",
+  authors: [{ name: "Md Mahi Alam" }],
+  creator: "Md Mahi Alam",
+  openGraph: {
+    title: "Md Mahi Alam - Full Stack Developer",
+    description: "Portfolio of Md Mahi Alam, a passionate Full Stack Web Developer specializing in React, Next.js, Node.js, and modern web technologies.",
+    type: "website",
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Md Mahi Alam - Full Stack Developer",
+    description: "Portfolio of Md Mahi Alam, a passionate Full Stack Web Developer specializing in React, Next.js, Node.js, and modern web technologies.",
+  },
   icons: {
     icon: [
       {

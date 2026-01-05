@@ -1,22 +1,30 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense, lazy } from 'react'
 import { AnimatePresence } from 'framer-motion'
 import { ThemeProvider } from './ThemeProvider'
-import SmoothScrollProvider from './SmoothScrollProvider'
 import LoadingScreen from './LoadingScreen'
 import BubbleBackground from './BubbleBackground'
 import ModernHeader from './sections/ModernHeader'
 import Hero from './sections/Hero'
-import About from './sections/About'
-import Education from './sections/Education'
-import Skills from './sections/Skills'
-import Projects from './sections/Projects'
-import Contact from './sections/Contact'
-import Footer from './sections/Footer'
 import SocialSidebar from './sections/SocialSidebar'
 import ScrollToTop from './sections/ScrollToTop'
 import FloatingContactButton from './FloatingContactButton'
+
+// Lazy load below-the-fold components for better performance
+const About = lazy(() => import('./sections/About'))
+const Education = lazy(() => import('./sections/Education'))
+const Skills = lazy(() => import('./sections/Skills'))
+const Projects = lazy(() => import('./sections/Projects'))
+const Contact = lazy(() => import('./sections/Contact'))
+const Footer = lazy(() => import('./sections/Footer'))
+
+// Simple loading component for lazy-loaded sections
+const SectionLoader = () => (
+  <div className="flex items-center justify-center py-20">
+    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+  </div>
+)
 
 export default function Portfolio() {
   const [isLoading, setIsLoading] = useState(true)
@@ -27,7 +35,7 @@ export default function Portfolio() {
 
   return (
     <ThemeProvider defaultTheme="system" storageKey="portfolio-theme">
-      <SmoothScrollProvider>
+      <div style={{ scrollBehavior: 'smooth' }}>
         <AnimatePresence mode="wait">
           {isLoading ? (
             <LoadingScreen key="loading" onComplete={handleLoadingComplete} />
@@ -43,19 +51,31 @@ export default function Portfolio() {
               
               <main className="grow">
                 <Hero />
-                <About />
-                <Education />
-                <Skills />
-                <Projects />
-                <Contact />
+                <Suspense fallback={<SectionLoader />}>
+                  <About />
+                </Suspense>
+                <Suspense fallback={<SectionLoader />}>
+                  <Education />
+                </Suspense>
+                <Suspense fallback={<SectionLoader />}>
+                  <Skills />
+                </Suspense>
+                <Suspense fallback={<SectionLoader />}>
+                  <Projects />
+                </Suspense>
+                <Suspense fallback={<SectionLoader />}>
+                  <Contact />
+                </Suspense>
               </main>
               
-              <Footer />
+              <Suspense fallback={<SectionLoader />}>
+                <Footer />
+              </Suspense>
               <ScrollToTop />
             </div>
           )}
         </AnimatePresence>
-      </SmoothScrollProvider>
+      </div>
     </ThemeProvider>
   )
 }

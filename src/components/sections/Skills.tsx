@@ -1,6 +1,5 @@
 import { motion, useInView } from 'framer-motion'
-import { useRef, useState } from 'react'
-import BubbleContainer from '../BubbleContainer'
+import { useRef, useState, memo } from 'react'
 
 const techStack = [
   { icon: "devicon-javascript-plain", color: "#F7DF1E", name: "JavaScript" },
@@ -66,7 +65,7 @@ const skillCardVariants = {
   }
 }
 
-export default function Skills() {
+const Skills = () => {
   const ref = useRef(null)
   const skillsRef = useRef(null)
   const isInView = useInView(ref, { once: true, margin: "-100px" })
@@ -74,17 +73,7 @@ export default function Skills() {
   const [hoveredTech, setHoveredTech] = useState<number | null>(null)
 
   return (
-    <BubbleContainer 
-      className="w-full bg-white dark:bg-gray-800 py-20 px-6 transition-colors duration-300" 
-      id="skills"
-      bubbleCount={7}
-      bubbleColors={[
-        'rgba(16, 185, 129, 0.08)',
-        'rgba(59, 130, 246, 0.08)',
-        'rgba(139, 92, 246, 0.08)',
-        'rgba(245, 158, 11, 0.08)',
-      ]}
-    >
+    <div className="w-full bg-white dark:bg-gray-800 py-20 px-6 transition-colors duration-300 relative" id="skills">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <motion.div 
@@ -133,7 +122,7 @@ export default function Skills() {
             {techStack.map((tech, index) => (
               <motion.div
                 key={index}
-                className="relative flex-shrink-0 w-20 h-20 bg-white dark:bg-gray-700 rounded-xl shadow-lg flex items-center justify-center border border-gray-100 dark:border-gray-600 group cursor-pointer"
+                className="relative shrink-0 w-20 h-20 bg-white dark:bg-gray-700 rounded-xl shadow-lg flex items-center justify-center border border-gray-100 dark:border-gray-600 group cursor-pointer will-change-transform"
                 variants={itemVariants}
                 whileHover={{ 
                   scale: 1.15,
@@ -165,23 +154,13 @@ export default function Skills() {
                   {tech.name}
                   <div className="absolute top-full left-1/2 -translate-x-1/2 w-2 h-2 bg-gray-900 dark:bg-white transform rotate-45 -translate-y-1/2" />
                 </motion.div>
-
-                {/* Glow effect */}
-                <motion.div
-                  className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-30 transition-opacity duration-300"
-                  style={{ 
-                    background: tech.color !== 'currentColor' 
-                      ? `radial-gradient(circle, ${tech.color}40, transparent)` 
-                      : 'radial-gradient(circle, rgba(59, 130, 246, 0.3), transparent)'
-                  }}
-                />
               </motion.div>
             ))}
           </div>
           
           {/* Gradient overlays for mobile scroll */}
-          <div className="absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-white dark:from-gray-800 to-transparent md:hidden pointer-events-none"></div>
-          <div className="absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-white dark:from-gray-800 to-transparent md:hidden pointer-events-none"></div>
+          <div className="absolute inset-y-0 left-0 w-8 bg-linear-to-r from-white dark:from-gray-800 to-transparent md:hidden pointer-events-none"></div>
+          <div className="absolute inset-y-0 right-0 w-8 bg-linear-to-l from-white dark:from-gray-800 to-transparent md:hidden pointer-events-none"></div>
         </motion.div>
         
         {/* Skills Section */}
@@ -212,19 +191,6 @@ export default function Skills() {
             }}
             transition={{ duration: 0.3 }}
           >
-            {/* Background decoration */}
-            <motion.div
-              className="absolute -top-10 -right-10 w-32 h-32 bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-full"
-              animate={{ 
-                rotate: 360,
-                scale: [1, 1.1, 1]
-              }}
-              transition={{ 
-                rotate: { duration: 20, repeat: Infinity, ease: "linear" },
-                scale: { duration: 4, repeat: Infinity, ease: "easeInOut" }
-              }}
-            />
-            
             <motion.h3 
               className="text-xl font-medium text-center text-gray-900 dark:text-white mb-8 relative z-10"
               initial={{ opacity: 0, y: 20 }}
@@ -245,7 +211,9 @@ export default function Skills() {
                 >
                   <div className="flex justify-between items-center">
                     <div className="flex items-center gap-3">
-                      <span className="material-icons text-blue-500 text-base">verified</span>
+                      <svg className="w-4 h-4 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
                       <h4 className="text-base font-medium text-gray-900 dark:text-white">{skill.name}</h4>
                     </div>
                     <span className="text-xs text-gray-400 dark:text-gray-500">{skill.level}</span>
@@ -254,7 +222,7 @@ export default function Skills() {
                   {/* Progress bar */}
                   <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2 overflow-hidden">
                     <motion.div
-                      className="h-full bg-gradient-to-r from-blue-500/20 to-purple-600/20 rounded-full"
+                      className="h-full bg-linear-to-r from-blue-500/20 to-purple-600/20 rounded-full"
                       initial={{ width: 0 }}
                       animate={skillsInView ? { width: `${skill.percentage}%` } : { width: 0 }}
                       transition={{ duration: 1.5, delay: 0.5 + (index * 0.1), ease: "easeOut" }}
@@ -275,19 +243,6 @@ export default function Skills() {
             }}
             transition={{ duration: 0.3 }}
           >
-            {/* Background decoration */}
-            <motion.div
-              className="absolute -top-10 -left-10 w-32 h-32 bg-gradient-to-br from-green-500/10 to-blue-500/10 rounded-full"
-              animate={{ 
-                rotate: -360,
-                scale: [1, 1.1, 1]
-              }}
-              transition={{ 
-                rotate: { duration: 25, repeat: Infinity, ease: "linear" },
-                scale: { duration: 5, repeat: Infinity, ease: "easeInOut" }
-              }}
-            />
-            
             <motion.h3 
               className="text-xl font-medium text-center text-gray-900 dark:text-white mb-8 relative z-10"
               initial={{ opacity: 0, y: 20 }}
@@ -308,7 +263,9 @@ export default function Skills() {
                 >
                   <div className="flex justify-between items-center">
                     <div className="flex items-center gap-3">
-                      <span className="material-icons text-green-500 text-base">verified</span>
+                      <svg className="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
                       <h4 className="text-base font-medium text-gray-900 dark:text-white">{skill.name}</h4>
                     </div>
                     <span className="text-xs text-gray-400 dark:text-gray-500">{skill.level}</span>
@@ -317,7 +274,7 @@ export default function Skills() {
                   {/* Progress bar */}
                   <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2 overflow-hidden">
                     <motion.div
-                      className="h-full bg-gradient-to-r from-green-500/20 to-blue-600/20 rounded-full"
+                      className="h-full bg-linear-to-r from-green-500/20 to-blue-600/20 rounded-full"
                       initial={{ width: 0 }}
                       animate={skillsInView ? { width: `${skill.percentage}%` } : { width: 0 }}
                       transition={{ duration: 1.5, delay: 0.7 + (index * 0.1), ease: "easeOut" }}
@@ -329,6 +286,8 @@ export default function Skills() {
           </motion.div>
         </motion.div>
       </div>
-    </BubbleContainer>
+    </div>
   )
 }
+
+export default memo(Skills)

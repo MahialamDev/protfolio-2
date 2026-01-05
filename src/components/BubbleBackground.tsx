@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback, useMemo } from 'react'
 
 interface Bubble {
   id: number
@@ -13,44 +13,58 @@ interface Bubble {
   color: string
 }
 
-export default function BubbleBackground() {
+const BubbleBackground = () => {
   const [bubbles, setBubbles] = useState<Bubble[]>([])
+  const [isVisible, setIsVisible] = useState(true)
+
+  const colors = useMemo(() => [
+    'rgba(59, 130, 246, 0.08)',   // blue - reduced opacity
+    'rgba(139, 92, 246, 0.08)',   // purple
+    'rgba(236, 72, 153, 0.08)',   // pink
+    'rgba(16, 185, 129, 0.08)',   // green
+    'rgba(245, 158, 11, 0.08)',   // yellow
+    'rgba(239, 68, 68, 0.08)',    // red
+  ], [])
+
+  const generateBubbles = useCallback(() => {
+    const newBubbles: Bubble[] = []
+    // Reduced from 15 to 8 bubbles for better performance
+    for (let i = 0; i < 8; i++) {
+      newBubbles.push({
+        id: i,
+        x: Math.random() * 100,
+        y: Math.random() * 100,
+        size: Math.random() * 80 + 40, // Slightly smaller bubbles
+        duration: Math.random() * 15 + 8, // Shorter duration
+        delay: Math.random() * 3,
+        color: colors[Math.floor(Math.random() * colors.length)]
+      })
+    }
+    setBubbles(newBubbles)
+  }, [colors])
 
   useEffect(() => {
-    const colors = [
-      'rgba(59, 130, 246, 0.1)',   // blue
-      'rgba(139, 92, 246, 0.1)',   // purple
-      'rgba(236, 72, 153, 0.1)',   // pink
-      'rgba(16, 185, 129, 0.1)',   // green
-      'rgba(245, 158, 11, 0.1)',   // yellow
-      'rgba(239, 68, 68, 0.1)',    // red
-    ]
-
-    const generateBubbles = () => {
-      const newBubbles: Bubble[] = []
-      for (let i = 0; i < 15; i++) {
-        newBubbles.push({
-          id: i,
-          x: Math.random() * 100,
-          y: Math.random() * 100,
-          size: Math.random() * 100 + 50,
-          duration: Math.random() * 20 + 10,
-          delay: Math.random() * 5,
-          color: colors[Math.floor(Math.random() * colors.length)]
-        })
-      }
-      setBubbles(newBubbles)
+    // Pause animations when page is not visible
+    const handleVisibilityChange = () => {
+      setIsVisible(!document.hidden)
     }
 
-    generateBubbles()
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange)
   }, [])
+
+  useEffect(() => {
+    generateBubbles()
+  }, [generateBubbles])
+
+  if (!isVisible) return null
 
   return (
     <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
       {bubbles.map((bubble) => (
         <motion.div
           key={bubble.id}
-          className="absolute rounded-full"
+          className="absolute rounded-full will-change-transform"
           style={{
             left: `${bubble.x}%`,
             top: `${bubble.y}%`,
@@ -59,19 +73,22 @@ export default function BubbleBackground() {
             background: `radial-gradient(circle, ${bubble.color}, transparent)`,
           }}
           animate={{
-            y: [0, -30, 0],
-            x: [0, 15, -15, 0],
-            scale: [1, 1.2, 0.8, 1],
-            opacity: [0.3, 0.6, 0.3],
+            y: [0, -20, 0], // Reduced movement
+            x: [0, 10, -10, 0], // Reduced movement
+            scale: [1, 1.1, 0.9, 1], // Reduced scale change
+            opacity: [0.2, 0.4, 0.2], // Reduced opacity
           }}
           transition={{
             duration: bubble.duration,
             delay: bubble.delay,
             repeat: Infinity,
-            ease: "easeInOut"
+            ease: "easeInOut",
+            repeatType: "reverse"
           }}
         />
       ))}
     </div>
   )
 }
+
+export default BubbleBackground
