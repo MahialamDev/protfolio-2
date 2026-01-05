@@ -195,7 +195,7 @@ export default function About() {
             variants={itemVariants}
           >
             <motion.button
-              className="group relative bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-6 py-3.5 rounded-xl flex items-center gap-3 font-medium text-sm shadow-lg hover:shadow-xl transition-all duration-300 border border-blue-500/20 backdrop-blur-sm overflow-hidden"
+              className="group relative bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white px-6 py-3.5 rounded-xl flex items-center gap-3 font-medium text-sm shadow-lg hover:shadow-xl transition-all duration-300 border border-blue-500/20 backdrop-blur-sm overflow-hidden"
               onClick={() => {
                 // Create a temporary link element for download
                 const link = document.createElement('a')

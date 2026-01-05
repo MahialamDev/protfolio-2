@@ -1,6 +1,25 @@
 import { motion, useInView } from 'framer-motion'
 import { useRef, useState, memo } from 'react'
 
+// Official technology colors mapping
+const getSkillColor = (skillName: string) => {
+  const colorMap: { [key: string]: string } = {
+    'HTML5': '#E34F26',
+    'CSS3': '#1572B6', 
+    'JavaScript': '#F7DF1E',
+    'React.JS': '#61DAFB',
+    'Next.JS': '#000000',
+    'Tailwind': '#06B6D4',
+    'Node.JS': '#339933',
+    'Express.JS': '#000000',
+    'MongoDB': '#47A248',
+    'SQL': '#00758F',
+    'Docker': '#2496ED',
+    'Kubernetes': '#326CE5'
+  }
+  return colorMap[skillName] || '#3B82F6' // fallback to blue
+}
+
 const techStack = [
   { icon: "devicon-javascript-plain", color: "#F7DF1E", name: "JavaScript" },
   { icon: "devicon-react-original", color: "#61DAFB", name: "React" },
@@ -219,10 +238,13 @@ const Skills = () => {
                     <span className="text-xs text-gray-400 dark:text-gray-500">{skill.level}</span>
                   </div>
                   
-                  {/* Progress bar */}
+                  {/* Progress bar with official technology color */}
                   <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2 overflow-hidden">
                     <motion.div
-                      className="h-full bg-linear-to-r from-blue-500/20 to-purple-600/20 rounded-full"
+                      className="h-full rounded-full"
+                      style={{
+                        background: `linear-gradient(90deg, ${getSkillColor(skill.name)}40, ${getSkillColor(skill.name)}80)`
+                      }}
                       initial={{ width: 0 }}
                       animate={skillsInView ? { width: `${skill.percentage}%` } : { width: 0 }}
                       transition={{ duration: 1.5, delay: 0.5 + (index * 0.1), ease: "easeOut" }}
@@ -271,10 +293,13 @@ const Skills = () => {
                     <span className="text-xs text-gray-400 dark:text-gray-500">{skill.level}</span>
                   </div>
                   
-                  {/* Progress bar */}
+                  {/* Progress bar with official technology color */}
                   <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2 overflow-hidden">
                     <motion.div
-                      className="h-full bg-linear-to-r from-green-500/20 to-blue-600/20 rounded-full"
+                      className="h-full rounded-full"
+                      style={{
+                        background: `linear-gradient(90deg, ${getSkillColor(skill.name)}40, ${getSkillColor(skill.name)}80)`
+                      }}
                       initial={{ width: 0 }}
                       animate={skillsInView ? { width: `${skill.percentage}%` } : { width: 0 }}
                       transition={{ duration: 1.5, delay: 0.7 + (index * 0.1), ease: "easeOut" }}
