@@ -69,7 +69,7 @@ export default function ModernHeader() {
         ref={navRef}
         className={`fixed top-0 w-full z-50 transition-all duration-500 ${
           scrolled 
-            ? 'bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl shadow-lg border-b border-white/20 dark:border-gray-800/20' 
+            ? 'bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl shadow-lg' 
             : 'bg-transparent'
         }`}
         initial={{ y: -100 }}
@@ -227,7 +227,7 @@ export default function ModernHeader() {
           {isMenuOpen && (
             <motion.div
               ref={menuRef}
-              className="lg:hidden absolute top-full left-0 right-0 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl border-b border-gray-200/20 dark:border-gray-800/20 shadow-xl"
+              className="lg:hidden absolute top-full left-0 right-0 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl shadow-xl"
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
