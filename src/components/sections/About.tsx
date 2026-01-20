@@ -199,8 +199,8 @@ export default function About() {
               onClick={() => {
                 // Create a temporary link element for download
                 const link = document.createElement('a')
-                link.href = '/MahialamCv.pdf'
-                link.download = 'Mahi_Alam_CV.pdf'
+                link.href = '/Mahialam_Resume.pdf'
+                link.download = 'Mahialam_Resume.pdf'
                 link.target = '_blank'
                 document.body.appendChild(link)
                 link.click()
